@@ -1,0 +1,8 @@
+eclipse.preferences.version=1
+ptk.properties.include.path.LinuxX86=../../../src/i2c
+ptk.properties.include.path.Raspbian=../../../src/i2c
+ptk.properties.library.name.LinuxX86=
+ptk.properties.library.name.Raspbian=
+ptk.properties.library.path.LinuxX86=
+ptk.properties.library.path.Raspbian=
+ptk.properties.selected.platform=LinuxX86

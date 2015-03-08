@@ -1,0 +1,52 @@
+/*
+ * This is a logi.CAD 3 program template
+ */
+PROGRAM Program1
+	VAR
+		/* worker variables */
+		fd : DINT := -1;
+		success : BOOL := FALSE;
+		i2c_bus_initialized : BOOL := FALSE;
+		direction : BOOL := TRUE;
+		
+		/* program specific constants */
+		i2c_bus : INT := 1;
+		i2c_address : DINT := 16#40;
+		servoMin : UINT := 150;
+		servoMax : UINT := 600;
+		
+		/* general constants */
+		I2C_SLAVE : DINT := 1795; /* a constant from the Linux kernel */
+	END_VAR
+	
+	/* prepare I2C bus */
+	IF NOT(i2c_bus_initialized) THEN
+		fd := I2C_open(bus_id := i2c_bus, ENO => success); /* open i2c bus */
+		IF success THEN
+			System_ioctl(fd := fd, request := I2C_SLAVE, data := i2c_address, ENO => success); /* set i2c address */
+		END_IF;
+		IF success THEN
+			setPWMFrequency(fd := fd, frequency := 60 /* Hz */, ENO => success);
+		END_IF;
+		IF success THEN
+			selectPWMMode(fd := fd, ENO => success);
+		END_IF;
+		IF success THEN
+			setAllPWM(fd := fd, on := 0, off := 0, ENO => success);
+		END_IF;
+		
+		i2c_bus_initialized := success;
+	END_IF;
+	
+	/* do actual job */
+	IF i2c_bus_initialized THEN
+		IF direction THEN
+			setPWM(fd := fd, channel := 0, on := 0, off := servoMin);	
+		ELSE
+			setPWM(fd := fd, channel := 0, on := 0, off := servoMax);
+		END_IF;
+		
+		direction := NOT(direction); /* alternate directions */
+	END_IF;
+	
+END_PROGRAM
